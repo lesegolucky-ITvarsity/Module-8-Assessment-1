@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Exciting Joke App</title>
+<style>
+  /* Basic styling for the page */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f8b500, #fceabb);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #333;
+  }
+
+  /* Style for main heading */
+  h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+  }
+
+  /* Container for the buttons with spacing */
+  .buttons {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  /* Style for buttons */
+  button {
+    background-color: #ff6f61;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  /* Hover effect for buttons */
+  button:hover {
+    background-color: #ff3b2e;
+    transform: scale(1.05);
+  }
+
+  /* Style for the joke display box */
+  #jokeContainer {
+    margin-top: 30px;
+    background: rgba(255,255,255,0.8);
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 80%;
+    font-size: 1.3em;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    opacity: 0; /* Start hidden for fade-in effect */
+    transition: opacity 1s ease;
+  }
+
+  /* Show the joke box by changing opacity */
+  #jokeContainer.show {
+    opacity: 1;
+  }
+
+  /* Style for the emojis */
+  #emoji {
+    font-size: 3em;
+    display: block;
+    margin-top: 20px;
+  }
+
+  /* Style for the signature at the bottom */
+  #signature {
+    margin-top: 40px;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2em;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+  }
+</style>
+</head>
+<body>
+
+<!-- Main title -->
+<h2>🎉 Ready for a Joke? Click a Button! 🎉</h2>
+
+<!-- Buttons for fetching jokes -->
+<div class="buttons">
+  <button id="fetchBtn">Get a Joke</button>
+  <button id="refreshBtn" disabled>Get Another Joke</button>
+</div>
+
+<!-- Container for displaying the joke -->
+<div id="jokeContainer"></div>
+
+<!-- Emojis for fun -->
+<div id="emoji">😄😂🤪</div>
+
+<!-- Signature at the bottom -->
+<div id="signature">by eungobs</div>
+
+<script>
+const jokeContainer = document.getElementById('jokeContainer');
+const fetchButton = document.getElementById('fetchBtn');
+const refreshButton = document.getElementById('refreshBtn');
+
+// Function to fetch and display a joke
+function fetchJoke() {
+  fetch('https://official-joke-api.appspot.com/jokes/random') // Call joke API
+    .then(response => response.json()) // Parse response as JSON
+    .then(data => {
+      // Log the data object in the console
+      console.log('Joke data:', data);
+      
+      // Create the joke text
+      const joke = `${data.setup} ${data.punchline}`;
+      
+      // Display the joke with fade-in effect
+      jokeContainer.innerHTML = `<p>${joke}</p>`;
+      jokeContainer.classList.remove('show'); // Reset fade
+      void jokeContainer.offsetWidth; // Trigger reflow
+      jokeContainer.classList.add('show'); // Fade in
+
+      // Enable the "Get Another Joke" button
+      refreshButton.disabled = false;
+    })
+    .catch(error => {
+      // Handle errors
+      console.error('Error fetching joke:', error);
+      alert('Oops! Could not fetch a joke right now.');
+    });
+}
+
+// When "Get a Joke" button is clicked
+fetchButton.addEventListener('click', () => {
+  fetchJoke();
+  fetchButton.disabled = true; // Disable after first click
+});
+
+// When "Get Another Joke" button is clicked
+refreshButton.addEventListener('click', () => {
+  fetchJoke();
+});
+</script>
+
+</body>
+</html>
